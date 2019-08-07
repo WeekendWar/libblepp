@@ -81,7 +81,6 @@ int main(int argc, char** argv)
 
 	int i=0;
 	while (1) {
-		
 
 		//Check to see if there's anything to read from the HCI
 		//and wait if there's not.
@@ -100,7 +99,7 @@ int main(int argc, char** argv)
 		
 		if(FD_ISSET(scanner.get_fd(), &fds))
 		{
-			//Only read id there's something to read
+			//Only read if there's something to read
 			vector<AdvertisingResponse> ads = scanner.get_advertisements();
 
 			for(const auto& ad: ads)
@@ -117,10 +116,15 @@ int main(int argc, char** argv)
 					cout << "Non connectable" << endl;
 				else
 					cout << "Scan response" << endl;
-				for(const auto& uuid: ad.UUIDs)
+
+				for(const auto& uuid: ad.UUIDs) 
+				{
 					cout << "  Service: " << to_str(uuid) << endl;
+				}
+
 				if(ad.local_name)
 					cout << "  Name: " << ad.local_name->name << endl;
+
 				if(ad.rssi == 127)
 					cout << "  RSSI: unavailable" << endl;
 				else if(ad.rssi <= 20)

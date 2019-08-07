@@ -29,9 +29,10 @@ set(SRC
     ${HEADERS})
 
 set(EXAMPLES
-    examples/lescan.cc
+    examples/battery.cc
     examples/blelogger.cc
     examples/bluetooth.cc
+    examples/lescan.cc    
     examples/lescan_simple.cc
     examples/temperature.cc)
 

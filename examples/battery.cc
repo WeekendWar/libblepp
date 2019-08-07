@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	{	
 		cerr << "Please supply address.\n";
 		cerr << "Usage:\n";
-		cerr << "prog <addres>";
+		cerr << "prog <address>";
 		exit(1);
 	}
 
@@ -58,15 +58,18 @@ int main(int argc, char **argv)
 	//Basically, extract the float and log it along with the time.
 	std::function<void(const PDUNotificationOrIndication&)> notify_cb = [&](const PDUNotificationOrIndication& n)
 	{
-		auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-		float temp = bluetooth_float_to_IEEE754(n.value().first+1);
+		cout <<" notify_cb()" << endl;
+		// auto ms_since_epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+		// float temp = bluetooth_float_to_IEEE754(n.value().first+1);
+		auto batt_level = n.value().first+1;
 
-		cout << setprecision(15) << ms_since_epoch.count()/1000. << " " << setprecision(5) << temp << endl;
+		// cout << setprecision(15) << ms_since_epoch.count()/1000. << " " << setprecision(5) << temp << endl;
+		 cout << " batt_level (n.value().first+1)" << batt_level << endl;
 	};
 	
 	//This is called when a complete scan of the device is done, giving
 	//all services and characteristics. This one simply searches for the 
-	//standardised "temperature" characteristic (aggressively cheating and not
+	//standardised "battery level" characteristic (aggressively cheating and not
 	//bothering to check if the service is correct) and sets up the device to 
 	//send us notifications.
 	//
@@ -77,16 +80,13 @@ int main(int argc, char **argv)
 
 		for(auto& service: gatt.primary_services)
 		{
-			cout << " service id: " << to_str(service.uuid) << endl;
+			cout << "service id: " << to_str(service.uuid) << endl;
 			for(auto& characteristic: service.characteristics)
-			{
-				cout << "  char id: " << to_str(characteristic.uuid) << endl;
-				if(characteristic.uuid == UUID("2a1c"))
+				if(characteristic.uuid == UUID("2a19"))
 				{
 					characteristic.cb_notify_or_indicate = notify_cb;
 					characteristic.set_notify_and_indicate(true, false);
 				}
-			}
 		}
 	};
 	
@@ -95,8 +95,10 @@ int main(int argc, char **argv)
 	//services and characteristics when you connect. If you want to save a small amount
 	//of time on a connect and avoid the complete scan (you are allowed to cache this 
 	//information in certain cases), then you can provide your own callbacks.
+	cout << " calling gatt.setup_standard_scan()" << endl;
 	gatt.setup_standard_scan(found_services_and_characteristics_cb);
 
+	cout << " assign gatt.disconnect callback" << endl;
 	//I think this one is reasonably clear?
 	gatt.cb_disconnected = [](BLEGATTStateMachine::Disconnect d)
 	{
