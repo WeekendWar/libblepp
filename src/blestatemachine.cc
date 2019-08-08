@@ -579,12 +579,14 @@ namespace BLEPP
 			}
 			else if(r.type() != ATT_OP_ERROR && r.type() != last_request + 1)
 			{
+				cout << "  err state = " << state << endl;
 				string msg = string("Unexpected response. Expected ") + att_op2str(last_request+1) + " got "  + att_op2str(r.type());
 				LOG(Error, msg);
 				fail(Disconnect(Disconnect::Reason::UnexpectedResponse, Disconnect::NoErrorCode));
 			}
 			else
 			{
+				cout << "  no error state = " << state << endl;
 				if(state == ReadingPrimaryService)
 				{
 					if(r.type() == ATT_OP_ERROR)

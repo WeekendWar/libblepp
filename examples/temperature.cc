@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	log_level = Error;
+	log_level = Trace;
 
 	//This class does all of the GATT interactions for you.
 	//It's a callback based interface, so you need to provide 
@@ -83,6 +83,8 @@ int main(int argc, char **argv)
 				cout << "  char id: " << to_str(characteristic.uuid) << endl;
 				if(characteristic.uuid == UUID("2a1c"))
 				{
+					cout << " desired char id match : " << to_str(characteristic.uuid)
+					     << " == " << "2a1c, temperature" << endl;
 					characteristic.cb_notify_or_indicate = notify_cb;
 					characteristic.set_notify_and_indicate(true, false);
 				}
